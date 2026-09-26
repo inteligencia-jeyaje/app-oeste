@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dirección Oeste - Pasaporte Elemental de Semillas</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 12px; background-color: #fcfcfc; color: #333; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border-top: 6px solid #134b95; }
+    h2, h3 { text-align: center; color: #2c3e50; margin-top: 5px; }
+    .seccion-oeste { background: #fffcfc; border: 1px solid #e6effa; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .titulo-sec { font-size: 14px; font-weight: bold; color: #134b95; margin-top: 0; margin-bottom: 10px; border-bottom: 1px dashed #134b95; padding-bottom: 4px; }
+    label { display: block; margin: 10px 0 4px; font-size: 13px; font-weight: 600; color: #4a5568; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-bottom: 5px; }
+    textarea { height: 65px; resize: none; }
+    button { width: 100%; padding: 12px; background-color: #134b95; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; transition: background 0.2s; }
+    button:hover { background-color: #0d3468; }
+    #status-msg { text-align: center; margin-top: 12px; padding: 10px; border-radius: 6px; font-weight: bold; display: none; }
+    .exito { background-color: #e8f5e9; color: #2e7d32; }
+    .alerta { background-color: #ffebee; color: #c62828; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>💧 Dirección Oeste (Agua)</h2>
+    <h3>Registro de Formación y Retiros</h3>
+    <p style="font-size:12px; color:#7f8c8d; text-align:center; margin-top:-8px;">Seguimiento del Pasaporte Elemental para la formación de Sahumadores Nuevos.</p>
+    
+    <div id="status-msg"></div>
+
+    <div class="seccion-oeste">
+      <div class="titulo-sec">🌱 Datos de la Semilla (Postulante)</div>
+      <label>Nombre Completo del Alumno(a):</label>
+      <input type="text" id="nombreSemilla" placeholder="Ej. Juan Pablo Mendoza">
+    </div>
+
+    <div class="seccion-oeste">
+      <div class="titulo-sec">🌀 Portal / Taller Completado</div>
+      <label>Selecciona el Elemento del Taller o Retiro:</label>
+      <select id="elementoTaller">
+        <option value="Portal de la Tierra (Sur)">Portal de la Tierra (Sur) - Enraizamiento y Materia</option>
+        <option value="Portal del Agua (Oeste)">Portal del Agua (Oeste) - Cuerpo Emocional y Linaje</option>
+        <option value="Portal del Aire (Norte)">Portal del Aire (Norte) - El Rezo y la Palabra</option>
+        <option value="Portal del Fuego (Este)">Portal del Fuego (Este) - Transmutación y Altar</option>
+        <option value="Portal del Éter / Retiro de Iniciación">Portal del Éter / Retiro e Iniciación Sagrada</option>
+      </select>
+    </div>
+
+    <div class="seccion-oeste">
+      <div class="titulo-sec">📝 Detalles y Resguardo del Ayni</div>
+      <label>Número de Comprobante / Recibo de Aporte (Opcional):</label>
+      <input type="text" id="comprobante" placeholder="Ej. Transf. BNB 458921 o Efectivo">
+      
+      <label>Lugar del Retiro / Notas Adicionales:</label>
+      <textarea id="notasTaller" placeholder="Ej. Dictado en la Maloca Central. Sostuvo la Abuela Iniciadora..."></textarea>
+    </div>
+
+    <button onclick="guardarAsistenciaOeste()">Asentar Taller en Pasaporte Elemental 💧</button>
+  </div>
+  <script>
+    // URL PROVISTA POR TU CUENTA DE GOOGLE APPS SCRIPT DE LA DIRECCIÓN OESTE
+    // Cuando logres crear la cuenta o si usas la del Este temporalmente, pega la URL aquí
+    const WEB_APP_URL_OESTE = "PEGA_AQUÍ_TU_URL_DE_APPS_SCRIPT_DEL_OESTE";
+
+    function alertarPantalla(mensaje, esError) {
+      var box = document.getElementById("status-msg");
+      box.innerText = mensaje;
+      box.className = esError ? "status-msg alerta" : "status-msg exito";
+      box.style.display = "block";
+      window.scrollTo(0, 0);
+    }
+
+    function guardarAsistenciaOeste() {
+      var semillaTxt = document.getElementById("nombreSemilla").value;
+      if (!semillaTxt.trim()) {
+        alertarPantalla("❌ El nombre de la Semilla es obligatorio para registrar su avance.", true);
+        return;
+      }
+
+      alertarPantalla("Asentando rezo en la matriz del Oeste...", false);
+
+      // Empaquetar los parámetros con las etiquetas exactas que espera el Código.gs
+      var datosTaller = {
+        target_sheet: "Oeste_Talleres",
+        nombreSemilla: semillaTxt,
+        elementoTaller: document.getElementById("elementoTaller").value,
+        comprobante: document.getElementById("comprobante").value,
+        notasTaller: document.getElementById("notasTaller").value
+      };
+
+      // Envío asíncrono blindado a la API sin colgar el navegador móvil
+      fetch(WEB_APP_URL_OESTE, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datosTaller)
+      })
+      .then(function() {
+        alertarPantalla("💧 ¡Portal elemental registrado con éxito para " + semillaTxt + "! Ya se guardó en Google Sheets.", false);
+        // Limpiar las casillas para un nuevo registro rápido
+        document.getElementById("nombreSemilla").value = "";
+        document.getElementById("comprobante").value = "";
+        document.getElementById("notasTaller").value = "";
+      })
+      .catch(function(error) {
+        alertarPantalla("❌ Error de comunicación: " + error.toString(), true);
+      });
+    }
+  </script>
+</body>
+</html>
